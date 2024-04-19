@@ -21,6 +21,19 @@ def fixed_start(fn):
     return __inner
 
 
+def async_fixed_start(fn):
+    @functools.wraps(fn)
+    async def __inner(*a, **k):
+        start = time.time()
+
+        while time.time() < math.ceil(start):
+            await asyncio.sleep(0.01)
+
+        return await fn(*a, **k)
+
+    return __inner
+
+
 @contextlib.contextmanager
 def window(delay_end: float, delay: Optional[float] = None):
     start = time.time()
